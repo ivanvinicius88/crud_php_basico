@@ -12,3 +12,8 @@
         return $produtos;
     }
 
+    function alteraProduto($conexao, $id, $nome, $preco, $descricao, $categoria_id) {
+        $query = "update produtos set nome = '{$nome}', preco = {$preco}, descricao='{$descricao}', categoria_id={$categoria_id} where id = {$id}";
+        return mysqli_query($conexao, $query);
+    }
+
