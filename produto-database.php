@@ -1,35 +1,53 @@
 <?php
 
-    function listaProdutos($conexao) {
-        $produtos = array();
+    class ProdutosDto{
 
-        $resultado = mysqli_query($conexao, "select p.*, c.nome as cat_nome from produtos as p inner join categorias as c on c.id = p.categoria_id");
-
-        while ($produto = mysqli_fetch_assoc($resultado)) {
-            array_push($produtos, $produto);
+        private $database;
+        
+        public function __construct($conexa){
+            $this->database = $conexao;
         }
 
-        return $produtos;
-    }
 
-    function alteraProduto($conexao, $id, $nome, $preco, $descricao, $categoria_id) {
-        $query = "update produtos set nome = '{$nome}', preco = {$preco}, descricao='{$descricao}', categoria_id={$categoria_id} where id = {$id}";
-        return mysqli_query($conexao, $query);
-    }
+        function listaProdutos() {
+            $produtos = array();
 
-    function buscaProduto($conexao, $id) {
-        $query = "select p.*, 
-                    c.nome as categoria_nome 
-                    from produtos as p
-                    inner join categorias as c
-                    on c.id = p.categoria_id
-                    where p.id = {$id}";
-        $resultado = mysqli_query($conexao, $query);
-        return mysqli_fetch_assoc($resultado);
-    }
+            $sql= "select p.*, c.nome as cat_nome from produtos as p inner join categorias as c on c.id = p.categoria_id";
 
-    function removeProduto($conexao, $id) {
-        $query = "delete from produtos where id = {$id}";
-        return mysqli_query($conexao, $query);
-    }
+            $resultado = mysqli_query($this->database->getConexao(),$sql);
 
+            while ($produto = mysqli_fetch_assoc($resultado)) {
+                array_push($produtos, $produto);
+            }
+
+            return $produtos;
+        }
+
+
+        function alteraProduto( $id, $nome, $preco, $descricao, $categoria_id) {
+            $query = "update produtos set nome = '{$nome}', preco = {$preco}, descricao='{$descricao}', categoria_id={$categoria_id} where id = {$id}";
+            return mysqli_query($this->database->getConexao(), $query);
+        }
+
+
+
+        function buscaProduto($id) {
+            $query = "select p.*, 
+                        c.nome as categoria_nome 
+                        from produtos as p
+                        inner join categorias as c
+                        on c.id = p.categoria_id
+                        where p.id = {$id}";
+            $resultado = mysqli_query($this->database->getConexao(), $query);
+            return mysqli_fetch_assoc($resultado);
+        }
+
+
+
+
+        function removeProduto($id) {
+            $query = "delete from produtos where id = {$id}";
+            return mysqli_query($this->database->getConexao(), $query);
+        }
+
+    }
